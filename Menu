@@ -1,0 +1,113 @@
+package mainApp;
+
+import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+
+import dao.SchoolDao;
+import dao.StudentDao;
+import entity.School;
+import entity.Student;
+
+public class Menu {
+	
+	
+	//scanner for user input
+	private Scanner scanner = new Scanner(System.in);
+	
+	// populating my menu
+	private List <String> options = Arrays.asList("(1)Display All Schools", "(2) Display a School Roster",
+				"(3) Create a New School", "(4) Delete an existing school", "(5) Create a new student", 
+				"(6) Delete an existing student", "(7) Exit");
+
+	
+	//schoolDao to access ourSQL data we use to populate our lists
+	private SchoolDao schoolDao = new SchoolDao();
+	private StudentDao studentDao = new StudentDao();
+	
+	public void Start() {
+		String selection = " ";
+		do {
+			//method to print menu
+			printMenu();
+			selection = scanner.nextLine();
+		try {
+			if (selection.equals("1")) {
+				// dispaly all schools
+				displaySchools();
+			}
+			else if(selection.equals("2")) {
+				//display a schools roster based on user input from school ID
+				displaySchoolRoster(); //this blips and doesn't output last_name
+			}
+			else if(selection.equals("3")) {
+				createSchool();
+			}
+			else if (selection.equals("4")) {
+				deleteSchool();
+			}
+			else if (selection.equals("5")){
+				createStudent();  
+			}
+			else if (selection.equals("6")) {
+				deleteStudent();
+			}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Please press enter to continue");
+			scanner.nextLine();
+		
+		}while (!selection.equals("7")); }
+
+	
+	private void printMenu() {
+		System.out.println("Select an option:\n--------------------");
+		for(int i = 0; i < options.size(); i++) {
+			System.out.println(options.get(i));
+		}
+	}
+	private void displaySchools() throws SQLException{
+		List <School> schools = schoolDao.getSchools();
+		for(School school : schools){
+			System.out.println(school.getSchoolId() + " " + school.getSchoolName());
+		}
+	}
+	private void displaySchoolRoster() throws SQLException {
+		System.out.print("Enter team id: ");
+		int id = Integer.parseInt(scanner.nextLine()); // takes a string and turns it into an int for our id variable
+		School school = schoolDao.getSchoolById(id);
+		System.out.println(school.getSchoolId() + " : " + school.getSchoolName());
+		for (Student student :school.getStudents()) {	
+			System.out.println("\tStudentID: " + student.getStudentId() + "       " +"Student Name: " + student.getFirstName() + " " + student.getLastName());
+		}
+	}
+	private void createSchool() throws SQLException {
+		System.out.print("Enter new school name: ");
+		String schoolName = scanner.nextLine();
+		schoolDao.createNewSchool(schoolName);
+	}
+	private void deleteSchool() throws SQLException {
+		System.out.print("Enter school ID you wish to delete: ");
+		int id = Integer.parseInt(scanner.nextLine());
+		schoolDao.deleteSchoolByID(id);
+	}
+	private void createStudent() throws SQLException {
+		System.out.println("Enter schoolID of student:");
+		int schoolID = Integer.parseInt(scanner.nextLine());
+		System.out.println("Enter First Name: ");
+		String firstName = scanner.nextLine();
+		System.out.println("Enter Last Name: ");
+		String lastName = scanner.nextLine();
+		studentDao.createNewStudent(schoolID, firstName, lastName);
+		String fullName = firstName = lastName;
+	}
+	private void deleteStudent() throws SQLException {
+		System.out.print("Enter student ID of student you wish to delete: ");
+		int studentID = Integer.parseInt(scanner.nextLine());
+		studentDao.deleteStudent(studentID);
+	}
+	
+}
+
