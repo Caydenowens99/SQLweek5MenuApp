@@ -1,0 +1,40 @@
+package entity;
+
+import java.util.List;
+
+public class School {
+
+	private int schoolId;
+	private String schoolName;
+	private List<Student> students;
+	
+	public School (int schoolId, String schoolName, List<Student> students) {
+		this.schoolId = schoolId;
+		this.schoolName = schoolName;
+		this.students = students;
+	}
+	
+	
+	public int getSchoolId() {
+		return schoolId;
+	}
+	public void setSchoolId(int schoolId) {
+		this.schoolId = schoolId;
+	}
+	public String getSchoolName() {
+		return schoolName;
+	}
+	public void setSchoolName(String schoolName) {
+		this.schoolName = schoolName;
+	}
+	public List<Student> getStudents() {
+		return students;
+	}
+	public void setStudents(List<Student> students) {
+		this.students = students;
+	}
+	
+	
+	
+	
+}
