@@ -1,0 +1,64 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import entity.Student;
+
+public class StudentDao { // this is used to interact with the database and get info to populate/be utilized in methods in our java code
+
+	
+	//Query to try to get first last name to print together
+ 	private final String Get_Full_Name = "SELECT students.first_name, students_lastname WHERE school_id = ?";
+	
+	//establish connection to database
+	private Connection connection;
+	//Query to get all members by user entered TEAM ID query
+	private final String GET_STUDENTS_BY_SCHOOL_ID_QUERY = "SELECT * FROM students WHERE school_id =?";
+	//depdendent query to delete school
+	private final String DELETE_MEMBERS_BY_SCHOOL_ID_QUERY = "DELETE FROM students WHERE school_id = ?";
+	
+	//query to create new member
+	private final String CREATE_NEW_MEMBER_QUERY = "INSERT INTO students (school_id, first_name, last_name) VALUES (?,?,?)";
+	
+	//query to delete new member
+	private final String DELETE_MEMBER_BY_ID_QUERY = "DELETE FROM students WHERE student_id = ?";
+	
+	public StudentDao() {
+		connection = DBConnection.getConnection();
+	}
+	
+	public List<Student> getStudentsBySchoolId(int id) throws SQLException {
+		PreparedStatement ps = connection.prepareStatement(GET_STUDENTS_BY_SCHOOL_ID_QUERY); // preparedstatement helps java know that it expects a query and save that to a variable
+		ps.setInt(1, id);
+		ResultSet rs = ps.executeQuery();
+		List<Student> students = new ArrayList<Student>();
+		
+		while (rs.next()) {
+			students.add(new Student(rs.getInt(1), rs.getString(3), rs.getString(4)));
+		}
+		return students;
+	}
+	public void deleteStudentsByStudentID(int schoolID) throws SQLException {
+		PreparedStatement ps = connection.prepareStatement(DELETE_MEMBERS_BY_SCHOOL_ID_QUERY);
+		ps.setInt(1, schoolID);
+		ps.executeUpdate();
+	}
+	public void createNewStudent(int schoolID, String firstName, String lastName) throws SQLException { //cannot get this method to insert a new member 
+	PreparedStatement ps = connection.prepareStatement(CREATE_NEW_MEMBER_QUERY);
+	ps.setInt(1, schoolID);
+	ps.setString(2, firstName);
+	ps.setString(3, lastName);
+	ps.executeUpdate();
+}
+	public void deleteStudent(int studentID) throws SQLException {
+		PreparedStatement ps = connection.prepareStatement(DELETE_MEMBER_BY_ID_QUERY);
+		ps.setInt(1, studentID);
+		ps.executeUpdate();
+	}
+
+}
